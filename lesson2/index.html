@@ -1,0 +1,563 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>버블·삽입 정렬 활동지</title>
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: 학습지 한 장을 탭 5개(수업 흐름 순서)로 나눈 단일 열 워크북. 상단 고정 진행 바. */
+:root{
+  --bg:#EEF3F1; --paper:#FFFFFF; --ink:#18302B; --muted:#5B706B; --line:#D3DFDB;
+  --accent:#1E7A62; --accent-soft:#DDEFE8; --marker:#F2B53A; --marker-soft:#FCEFCF;
+  --good:#1E7A62; --bad:#C2453A; --bad-soft:#F8E1DE;
+  --f-display:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1A18; --paper:#162522; --ink:#E3EEEA; --muted:#93A9A3; --line:#2A3D39;
+  --accent:#4FC1A0; --accent-soft:#1D3A33; --marker:#F2B53A; --marker-soft:#3A3120;
+  --good:#4FC1A0; --bad:#EE7D72; --bad-soft:#3E2523; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1A18; --paper:#162522; --ink:#E3EEEA; --muted:#93A9A3; --line:#2A3D39;
+  --accent:#4FC1A0; --accent-soft:#1D3A33; --marker:#F2B53A; --marker-soft:#3A3120;
+  --good:#4FC1A0; --bad:#EE7D72; --bad-soft:#3E2523; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:860px;margin:0 auto}
+header.top{padding-block:24px 8px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+.unit{font-size:12px;letter-spacing:.06em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:400;font-size:32px;margin:2px 0 0;line-height:1.15;text-wrap:balance}
+.who{display:flex;gap:8px;flex-wrap:wrap}
+.who label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.cell input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.who input{width:120px}.who input#num{width:70px}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid var(--line)}
+nav.tabs button{flex:1 0 auto;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+nav.tabs button .t{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+nav.tabs button[aria-selected="true"] .t{color:var(--paper);opacity:.85}
+nav.tabs button.done::after{content:"✓";font-weight:700}
+section.step{padding-block:20px 0;display:flex;flex-direction:column;gap:18px}
+.step-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.step-head h2{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0}
+.step-head .goal{color:var(--muted);font-size:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h3{margin:0;font-size:16px;display:flex;gap:8px;align-items:center}
+.tag{font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:4px;background:var(--marker-soft);color:var(--ink);border:1px solid var(--marker)}
+.note{font-size:13.5px;color:var(--muted);margin:0}
+.term{background:linear-gradient(transparent 58%,var(--marker-soft) 58%);font-weight:700}
+.btn{font:inherit;font-size:14px;border:1px solid var(--accent);background:var(--accent);color:var(--paper);border-radius:6px;padding:7px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb{font-size:14px;min-height:1.4em;margin:0}
+.fb.ok{color:var(--good)}.fb.no{color:var(--bad)}
+textarea{width:100%;min-height:64px;resize:vertical}
+/* 사례 분류 */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.case{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.case p{margin:0;font-weight:500}
+.seg{display:flex;gap:4px}
+.seg button{flex:1;font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:6px;padding:4px 6px;cursor:pointer}
+.seg button.on{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.case.ok{border-color:var(--good)}.case.no{border-color:var(--bad);background:var(--bad-soft)}
+.states{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.states label{font-size:13px;color:var(--muted)}
+/* 스도쿠 */
+.sudo-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.sudoku{display:grid;grid-template-columns:repeat(6,44px);grid-template-rows:repeat(6,44px);border:2px solid var(--ink);width:max-content}
+.cell{border:1px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:20px;position:relative}
+.cell.br{border-right:2px solid var(--ink)}.cell.bb{border-bottom:2px solid var(--ink)}
+.cell.given{color:var(--ink);font-weight:700}
+.cell input{width:100%;height:100%;border:0;border-radius:0;background:transparent;text-align:center;font-family:var(--f-mono);font-size:20px;color:var(--accent);padding:0}
+.cell.hl{background:var(--marker-soft)}
+.cell.wrong{background:var(--bad-soft)}.cell.wrong input{color:var(--bad)}
+.rules{margin:0;padding-left:18px;font-size:14px}
+/* 그래프 */
+.graph-wrap{overflow-x:auto}
+svg.kb{width:100%;max-width:520px;height:auto;display:block}
+svg.kb .edge{fill:none;stroke:var(--muted);stroke-width:5;cursor:pointer;stroke-linecap:round}
+svg.kb .edge:hover{stroke:var(--marker)}
+svg.kb .edge.used{stroke:var(--accent);stroke-dasharray:2 9}
+svg.kb .node circle{fill:var(--paper);stroke:var(--ink);stroke-width:2.5;cursor:pointer}
+svg.kb .node.cur circle{fill:var(--marker)}
+svg.kb .node text{fill:var(--ink);font-family:var(--f-display);font-size:22px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.walk{font-family:var(--f-mono);font-size:14px;word-break:break-all}
+.deg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:420px}
+.deg label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:2px}
+.deg input{width:100%}
+/* 합 비교 */
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;font-size:14px}
+.bar{height:16px;border-radius:3px;background:var(--accent);min-width:3px;transition:width .2s}
+.bar.b2{background:var(--marker)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.algos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.algo{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.algo b{display:block;margin-bottom:4px}
+.algo code{font-family:var(--f-mono);font-size:13px}
+/* 하노이 */
+.hanoi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.peg{position:relative;height:170px;border:1px solid var(--line);border-radius:8px;cursor:pointer;display:flex;flex-direction:column-reverse;align-items:center;padding-block:8px 28px;gap:2px;background:var(--paper)}
+.peg::before{content:"";position:absolute;bottom:28px;top:14px;left:50%;width:6px;margin-left:-3px;background:var(--line);border-radius:3px}
+.peg .lbl{position:absolute;bottom:4px;font-family:var(--f-display);font-size:18px}
+.peg.sel{border-color:var(--marker);box-shadow:0 0 0 2px var(--marker) inset}
+.disk{position:relative;height:20px;border-radius:5px;border:1.5px solid var(--ink)}
+.peg.sel .disk:last-of-type{transform:translateY(-8px)}
+.hstats{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.tbl-wrap{overflow-x:auto}
+table.moves{border-collapse:collapse;font-size:14px}
+table.moves th,table.moves td{border:1px solid var(--line);padding:6px 10px;text-align:center}
+table.moves th{background:var(--accent-soft);font-weight:500}
+table.moves input{width:56px;text-align:center}
+.recur{font-size:14.5px;display:flex;flex-direction:column;gap:6px}
+.recur select{padding:2px 4px}
+/* 정리 */
+.sum p{margin:0;line-height:2.2}
+.sum select{min-width:120px}
+.self{display:flex;flex-direction:column;gap:8px}
+.self .q{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;border-bottom:1px dashed var(--line);padding-bottom:8px;font-size:14px}
+.png-prev{display:block;max-width:100%;width:520px;height:auto;border:1px solid var(--line);border-radius:6px}
+.pager{display:flex;justify-content:space-between;padding-block:20px 0}
+@media (max-width:480px){.sudoku{grid-template-columns:repeat(6,40px);grid-template-rows:repeat(6,40px)}h1{font-size:27px}.peg{height:150px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* 정렬 활동 공통 */
+.arr{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+.cw{display:flex;flex-direction:column;align-items:center;gap:3px}
+.box{width:46px;height:46px;border:1.5px solid var(--ink);border-radius:7px;display:grid;place-items:center;font-family:var(--f-mono);font-size:19px;background:var(--paper);color:var(--ink);transition:background .15s}
+.box.sorted{background:var(--marker-soft);border-color:var(--marker)}
+.box.cur{box-shadow:0 0 0 3px var(--accent)}
+.box.key{background:var(--accent-soft);border-color:var(--accent)}
+.box.fixed{background:var(--line);border-style:double;border-width:3px}
+.box.dim{opacity:.4}
+.box.region{background:var(--accent-soft)}
+.box.pv{background:var(--marker-soft);border-color:var(--marker)}
+.lab{font-size:11px;font-weight:700;color:var(--accent);min-height:15px;line-height:15px;text-align:center;white-space:nowrap}
+.slot{width:22px;height:46px;border:1.5px dashed var(--line);border-radius:6px;background:transparent;color:var(--muted);cursor:pointer;font-size:12px;padding:0}
+.slot:hover,.slot:focus-visible{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px}
+.ctrl .btn{min-width:110px}
+.log-wrap{overflow-x:auto}
+table.log{border-collapse:collapse;font-size:14px;width:100%}
+table.log th,table.log td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+table.log th{font-weight:500;color:var(--muted);font-size:12.5px}
+table.log td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+table.cust{border-collapse:collapse;font-size:14px;width:100%;min-width:440px}
+table.cust th,table.cust td{border:1px solid var(--line);padding:6px 10px;text-align:center}
+table.cust th{background:var(--accent-soft);font-weight:500}
+table.cust th.key{background:var(--marker-soft);border-color:var(--marker)}
+.qgrid{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:14.5px}
+.qgrid input{width:70px;text-align:center}
+.qgrid select{min-width:110px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.col{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col h4{margin:0;font-size:15px}
+.col label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.col input{width:100%;font-family:var(--f-mono)}
+.col input.ok{border-color:var(--good)}.col input.no{border-color:var(--bad);background:var(--bad-soft)}
+.hint{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.zone{border:1.5px dashed var(--line);border-radius:8px;padding:10px;min-height:76px;display:flex;flex-direction:column;gap:6px}
+.zone b{font-size:13px;color:var(--muted);font-weight:500}
+.chip{font-family:var(--f-mono);font-size:17px;border:1.5px solid var(--ink);border-radius:7px;background:var(--paper);color:var(--ink);padding:6px 12px;cursor:pointer}
+.chip:hover{border-color:var(--accent)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:14px;height:14px;border-radius:3px;border:1.5px solid var(--ink);display:inline-block}
+.done-msg{font-weight:700;color:var(--good)}
+.btn:disabled{opacity:.4;cursor:default}
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="unit">Ⅲ. 알고리즘과 프로그래밍 · 1. 알고리즘 · 102~104쪽</div>
+    <h1>버블 정렬과 삽입 정렬</h1>
+  </div>
+  <div class="who">
+    <label for="num">번호<input id="num" inputmode="numeric" autocomplete="off"></label>
+    <label for="name">이름<input id="name" autocomplete="off"></label>
+  </div>
+</header>
+<nav class="tabs" role="tablist" id="tabs"></nav>
+<!-- 1. 정렬이란 -->
+<section class="step" data-title="정렬이란">
+  <div class="step-head"><h2>정렬이란?</h2><span class="goal">기준(키)에 따라 데이터를 차례대로 재배열하기</span></div>
+  <div class="card">
+    <p class="note" style="color:var(--ink)"><span class="term">정렬</span>은 나열된 데이터를 특정 속성을 기준으로 차례대로 재배열하는 작업입니다. 작은 값부터 큰 값 순서는 <b>오름차순</b>, 큰 값부터 작은 값 순서는 <b>내림차순</b>이에요. 정렬의 기준이 되는 필드를 <b>키(key)</b>라고 합니다.</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 1</span>고객 정보 정렬하기</h3>
+    <div class="row">
+      <label for="custKey" class="note">기준(키)</label>
+      <select id="custKey"><option value="code">고객 코드</option><option value="name">이름</option><option value="tel">전화번호</option><option value="grade">고객 등급</option></select>
+      <div class="seg" id="custOrd" style="min-width:200px"><button data-v="asc" class="on">오름차순</button><button data-v="desc">내림차순</button></div>
+    </div>
+    <div class="tbl-wrap"><table class="cust" id="cust"></table></div>
+    <div class="qgrid">
+      <label for="q_name">이름을 기준으로 오름차순 정렬했을 때 첫 번째 고객은?</label><input id="q_name" data-save style="width:110px">
+      <label for="q_tel">전화번호를 기준으로 오름차순 정렬했을 때 첫 번째 고객은?</label><input id="q_tel" data-save style="width:110px">
+    </div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 2</span>용어 연결하기</h3>
+    <div class="qgrid">
+      <label for="t1">고객 한 명에 대한 정보 전체 (표의 한 행)</label><select id="t1" data-save></select>
+      <label for="t2">'전화번호'처럼 같은 속성을 가진 데이터의 모음 (표의 한 열)</label><select id="t2" data-save></select>
+      <label for="t3">레코드의 집합 (표 전체)</label><select id="t3" data-save></select>
+      <label for="t4">데이터를 정렬하는 데 기준이 되는 특정 필드</label><select id="t4" data-save></select>
+    </div>
+    <div class="row"><button class="btn" id="a1Check">확인하기</button><p class="fb" id="a1Fb"></p></div>
+  </div>
+</section>
+
+<!-- 2. 버블 정렬 -->
+<section class="step" data-title="버블 정렬" hidden>
+  <div class="step-head"><h2>버블 정렬</h2><span class="goal">인접한 두 요소를 비교하고, 순서가 틀리면 교환하기</span></div>
+  <div class="card">
+    <p class="note" style="color:var(--ink)"><span class="term">버블 정렬</span>은 리스트의 앞에서부터 인접한 두 요소를 비교해 나가면서, 순서가 잘못되었으면 위치를 교환하는 정렬 알고리즘입니다. 한 단계가 끝날 때마다 가장 큰 요소가 맨 뒤로 가서 자리를 잡아요. 물속 거품이 위로 올라가는 모습과 비슷하다고 해서 붙은 이름입니다.</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 3</span>버블 정렬 직접 해 보기 (오름차순)</h3>
+    <div class="row">
+      <label for="bList" class="note">리스트</label>
+      <select id="bList"><option value="0">교과서 예제: 10 6 2 4 3</option><option value="1">도전: 7 9 6 2 1 3</option></select>
+      <button class="btn ghost" id="bReset">처음부터</button>
+    </div>
+    <div class="legend"><span><i style="box-shadow:0 0 0 2px var(--accent)"></i>비교 중인 두 요소</span><span><i style="background:var(--marker-soft);border-color:var(--marker)"></i>정렬된 영역</span></div>
+    <div class="arr" id="bArr"></div>
+    <p class="note" id="bMsg"></p>
+    <div class="ctrl"><button class="btn" id="bSwap">교환하기</button><button class="btn ghost" id="bKeep">그대로 두기</button></div>
+    <p class="fb" id="bFb"></p>
+    <div class="log-wrap"><table class="log"><thead><tr><th>단계</th><th>단계가 끝난 결과</th><th>비교</th><th>교환</th></tr></thead><tbody id="bLog"></tbody></table></div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 4</span>최선의 경우와 최악의 경우</h3>
+    <p class="note">요소가 5개인 리스트를 버블 정렬할 때, 비교와 교환은 각각 몇 번 일어날까요? 위에서 직접 해 본 결과를 떠올리며 적어 보세요.</p>
+    <div class="qgrid">
+      <span>모두 정렬된 리스트 [1 2 3 4 5] · 비교 횟수</span><input id="bq1" inputmode="numeric" data-save aria-label="정렬된 리스트 비교 횟수">
+      <span>모두 정렬된 리스트 [1 2 3 4 5] · 교환 횟수</span><input id="bq2" inputmode="numeric" data-save aria-label="정렬된 리스트 교환 횟수">
+      <span>역순으로 정렬된 리스트 [5 4 3 2 1] · 비교 횟수</span><input id="bq3" inputmode="numeric" data-save aria-label="역순 리스트 비교 횟수">
+      <span>역순으로 정렬된 리스트 [5 4 3 2 1] · 교환 횟수</span><input id="bq4" inputmode="numeric" data-save aria-label="역순 리스트 교환 횟수">
+    </div>
+    <div class="row"><button class="btn" id="bqCheck">확인하기</button><p class="fb" id="bqFb"></p></div>
+  </div>
+</section>
+
+<!-- 3. 삽입 정렬 -->
+<section class="step" data-title="삽입 정렬" hidden>
+  <div class="step-head"><h2>삽입 정렬</h2><span class="goal">정렬된 영역의 알맞은 자리에 하나씩 끼워 넣기</span></div>
+  <div class="card">
+    <p class="note" style="color:var(--ink)"><span class="term">삽입 정렬</span>은 데이터를 정렬된 영역과 정렬되지 않은 영역으로 나누고, 정렬되지 않은 영역의 원소를 정렬된 영역의 알맞은 자리에 한 개씩 삽입하는 정렬 알고리즘입니다. 카드 게임에서 오른손의 카드를 한 장씩 왼손의 정렬된 카드 사이에 끼워 넣는 것과 비슷해요. 처음에는 첫 번째 요소만 정렬된 영역입니다.</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 5</span>삽입 정렬 직접 해 보기 (오름차순)</h3>
+    <div class="row">
+      <label for="iList" class="note">리스트</label>
+      <select id="iList"><option value="0">교과서 예제: 10 6 4 2 3 1 7</option><option value="1">도전: 7 9 6 2 1 3</option></select>
+      <button class="btn ghost" id="iReset">처음부터</button>
+    </div>
+    <div class="legend"><span><i style="background:var(--marker-soft);border-color:var(--marker)"></i>정렬된 영역</span><span><i style="background:var(--accent-soft);border-color:var(--accent)"></i>이번에 삽입할 요소</span><span><i style="border-style:dashed;border-color:var(--muted)"></i>끼워 넣을 수 있는 자리</span></div>
+    <div class="arr" id="iArr"></div>
+    <p class="note" id="iMsg"></p>
+    <p class="fb" id="iFb"></p>
+    <div class="log-wrap"><table class="log"><thead><tr><th>단계</th><th>삽입한 값</th><th>삽입 후 결과</th><th>비교</th><th>이동</th></tr></thead><tbody id="iLog"></tbody></table></div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 6</span>최선의 경우와 최악의 경우</h3>
+    <p class="note">요소가 5개인 리스트를 삽입 정렬할 때를 생각해 보세요. 이동은 요소가 한 칸씩 뒤로 밀리는 것(교환)을 뜻합니다.</p>
+    <div class="qgrid">
+      <span>모두 정렬된 리스트 [1 2 3 4 5] · 비교 횟수</span><input id="iq1" inputmode="numeric" data-save aria-label="정렬된 리스트 비교 횟수">
+      <span>모두 정렬된 리스트 [1 2 3 4 5] · 이동 횟수</span><input id="iq2" inputmode="numeric" data-save aria-label="정렬된 리스트 이동 횟수">
+      <span>역순으로 정렬된 리스트 [5 4 3 2 1] · 비교 횟수</span><input id="iq3" inputmode="numeric" data-save aria-label="역순 리스트 비교 횟수">
+      <span>역순으로 정렬된 리스트 [5 4 3 2 1] · 이동 횟수</span><input id="iq4" inputmode="numeric" data-save aria-label="역순 리스트 이동 횟수">
+    </div>
+    <div class="row"><button class="btn" id="iqCheck">확인하기</button><p class="fb" id="iqFb"></p></div>
+  </div>
+</section>
+
+<!-- 4. 성능 비교 -->
+<section class="step" data-title="성능 비교" hidden>
+  <div class="step-head"><h2>어떤 정렬이 더 빠를까?</h2><span class="goal">입력 상태에 따라 연산 횟수 비교하기</span></div>
+  <div class="card">
+    <h3><span class="tag">활동 7</span>정렬 실험실</h3>
+    <p class="note">데이터의 개수와 상태를 바꿔 가며 두 알고리즘의 비교 횟수와 교환(이동) 횟수를 비교해 보세요.</p>
+    <div class="row">
+      <label for="xN" class="note">데이터 개수 n =</label><input type="range" id="xN" min="5" max="200" value="20" style="flex:1;min-width:140px"><span class="num" id="xNV">20</span>
+    </div>
+    <div class="row">
+      <label for="xType" class="note">데이터 상태</label>
+      <select id="xType"><option value="sorted">모두 정렬됨 (최선)</option><option value="nearly">거의 정렬됨</option><option value="random" selected>무작위</option><option value="reverse">역순 (최악)</option></select>
+      <button class="btn ghost" id="xShuffle">다시 섞기</button>
+    </div>
+    <div class="bars" id="xBars"></div>
+    <p class="note" id="xNote"></p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 8</span>수행 시간 정리하기</h3>
+    <div class="tbl-wrap"><table class="moves"><tr><th></th><th>최선의 경우</th><th>최악의 경우</th></tr>
+      <tr><th>버블 정렬</th><td><select id="o1" data-save></select></td><td><select id="o2" data-save></select></td></tr>
+      <tr><th>삽입 정렬</th><td><select id="o3" data-save></select></td><td><select id="o4" data-save></select></td></tr></table></div>
+    <div class="qgrid">
+      <label for="o5">대부분 정렬되어 있는 데이터를 정렬할 때 더 효율적인 알고리즘은?</label><select id="o5" data-save><option value="">선택</option><option>버블 정렬</option><option>삽입 정렬</option></select>
+    </div>
+    <div class="row"><button class="btn" id="oCheck">확인하기</button><p class="fb" id="oFb"></p></div>
+  </div>
+</section>
+
+<!-- 5. 정리 -->
+<section class="step" data-title="정리" hidden>
+  <div class="step-head"><h2>개념 정리</h2><span class="goal">주요 용어 확인과 성취도 점검</span></div>
+  <div class="card sum">
+    <h3><span class="tag">활동 9</span>알맞은 용어 고르기</h3>
+    <p><select id="c1" data-save></select>은 서로 인접한 두 요소를 비교해 나가면서 <select id="c2" data-save></select>하는 알고리즘이다.</p>
+    <p><select id="c3" data-save></select>은 정렬된 영역으로 정렬 기준에 맞게 한 개씩 삽입하는 <select id="c4" data-save></select> 알고리즘이다.</p>
+    <div class="row"><button class="btn" id="cCheck">확인하기</button><p class="fb" id="cFb"></p></div>
+  </div>
+  <div class="card"><h3><span class="tag">성취도 평가</span>스스로 점검하기</h3><div class="self" id="self"></div></div>
+  <div class="card">
+    <h3>제출하기</h3>
+    <p class="note">결과 이미지를 만들어 PNG 파일로 저장한 뒤, 선생님이 안내한 곳에 첨부하세요. 활동 내용을 고쳤다면 이미지를 다시 만들어 주세요.</p>
+    <div class="row"><button class="btn" id="makePng">결과 이미지 만들기</button><button class="btn ghost" id="savePng" hidden>PNG 저장</button><span class="fb" id="pngFb"></span></div>
+    <img id="pngPrev" class="png-prev" alt="제출용 결과 이미지" hidden>
+    <p class="note" id="pngHint" hidden>저장 버튼이 동작하지 않으면 이미지를 길게 눌러(휴대폰) 또는 오른쪽 클릭해서(컴퓨터) '이미지 저장'을 고르세요.</p>
+  </div>
+</section>
+
+<div class="pager"><button class="btn ghost" id="prev">← 이전</button><button class="btn" id="next">다음 →</button></div>
+</div>
+
+<script>
+(function(){
+window.WS={"key": "sort-ws-1", "tabTitle": "버블·삽입 정렬 활동지", "title": "버블 정렬과 삽입 정렬", "unit": "Ⅲ. 알고리즘과 프로그래밍 · 1. 알고리즘 · 102~104쪽", "file": "버블삽입정렬", "self": ["다양한 정렬 알고리즘의 수행 과정을 이해하고 설명할 수 있는가?", "다양한 정렬 알고리즘의 성능을 수행 시간으로 비교할 수 있는가?"]};
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const WS=window.WS;
+let S={};
+try{S=JSON.parse(localStorage.getItem(WS.key)||'{}')||{}}catch(e){S={}}
+let pngBlob=null,pngUrl=null,pngStale=false;
+function save(){try{localStorage.setItem(WS.key,JSON.stringify(S))}catch(e){}
+ if(pngBlob&&!pngStale){pngStale=true;const f=$('#pngFb');f.className='fb no';f.textContent='내용이 바뀌었어요. 이미지를 다시 만들어 주세요.'}}
+function say(el,ok,msg){el.className='fb '+(ok===null?'':ok?'ok':'no');el.textContent=msg}
+function nums(str){return String(str||'').trim().split(/[\s,·]+/).filter(Boolean).map(Number)}
+function same(a,b){return a.length===b.length&&a.every((x,i)=>x===b[i])}
+function fillSelect(id,opts){$('#'+id).innerHTML='<option value="">선택</option>'+opts.map(o=>`<option>${o}</option>`).join('')}
+
+/* 탭 */
+const steps=$$('section.step');let cur=0;const tabs=$('#tabs');
+steps.forEach((sec,i)=>{const b=document.createElement('button');b.role='tab';b.id='tab'+i;b.textContent=sec.dataset.title;b.onclick=()=>go(i);tabs.appendChild(b)});
+function go(i){cur=Math.max(0,Math.min(steps.length-1,i));
+ steps.forEach((s,k)=>s.hidden=k!==cur);
+ $$('#tabs button').forEach((b,k)=>b.setAttribute('aria-selected',k===cur));
+ $('#prev').disabled=cur===0;$('#next').textContent=cur===steps.length-1?'처음으로':'다음 →';
+ window.scrollTo({top:0});S.tab=cur;save()}
+$('#prev').onclick=()=>go(cur-1);
+$('#next').onclick=()=>go(cur===steps.length-1?0:cur+1);
+function markDone(i,ok){S['done'+i]=ok;$('#tab'+i).classList.toggle('done',!!ok);save()}
+['num','name'].forEach(id=>{const el=$('#'+id);el.value=S[id]||'';el.oninput=()=>{S[id]=el.value;save()}});
+
+/* 성취도 자기 점검 */
+S.self=S.self||{};
+WS.self.forEach((q,i)=>{const d=document.createElement('div');d.className='q';
+ d.innerHTML=`<span>${q}</span><div class="seg" style="min-width:160px"><button data-v="예">예</button><button data-v="아니요">아니요</button></div>`;
+ d.querySelectorAll('button').forEach(b=>{b.classList.toggle('on',S.self[i]===b.dataset.v);
+  b.onclick=()=>{S.self[i]=b.dataset.v;d.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));save()}});
+ $('#self').appendChild(d)});
+
+/* 제출용 PNG */
+function wrapText(ctx,text,maxW){const out=[];String(text).split('\n').forEach(par=>{let line='';
+ for(const ch of par){const t=line+ch;if(ctx.measureText(t).width>maxW&&line){out.push(line);line=ch}else line=t}
+ out.push(line)});return out}
+async function makePng(){
+ try{await document.fonts.ready}catch(e){}
+ const v=id=>(S[id]||'').trim(), dash=x=>(x===undefined||x===null||x==='')?'-':x;
+ const W=1080,P=56,LW=250,VX=P+LW,VW=W-VX-P;
+ const C={bg:'#FFFFFF',ink:'#18302B',muted:'#5B706B',line:'#D3DFDB',accent:'#1E7A62',soft:'#DDEFE8',bad:'#C2453A',mark:'#FCEFCF'};
+ const F=(w,sz,fam)=>`${w} ${sz}px ${fam}`, body='"IBM Plex Sans KR","Malgun Gothic",sans-serif', disp='"Do Hyeon","IBM Plex Sans KR",sans-serif';
+ const rows=WS.rows(dash).concat([['성취도 자기 점검',WS.self.map((q,i)=>`${i+1}. ${(S.self&&S.self[i])||'-'}`).join('   '),null]]);
+ const cv=document.createElement('canvas'),ctx=cv.getContext('2d');
+ ctx.font=F(400,24,body);
+ const laid=rows.map(([k,t,st])=>{const lines=wrapText(ctx,t,VW);ctx.font=F(700,24,body);const kl=wrapText(ctx,k,LW-20);ctx.font=F(400,24,body);
+  return {kl,lines,st,h:Math.max(lines.length*36,kl.length*32+(st===null?0:40))+28}});
+ const headH=210,footH=70,H=headH+laid.reduce((a,r)=>a+r.h,0)+footH;
+ cv.width=W;cv.height=H;
+ ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);ctx.fillStyle=C.accent;ctx.fillRect(0,0,W,10);ctx.textBaseline='top';
+ ctx.fillStyle=C.muted;ctx.font=F(400,22,body);ctx.fillText(WS.unit,P,44);
+ ctx.fillStyle=C.ink;ctx.font=F(400,52,disp);ctx.fillText(WS.title+' 활동 결과',P,80);
+ const d=new Date(),stamp=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+ ctx.font=F(700,30,body);ctx.fillText(`${dash(v('num'))}번  ${dash(v('name'))}`,P,152);
+ ctx.font=F(400,22,body);ctx.fillStyle=C.muted;ctx.textAlign='right';ctx.fillText(stamp,W-P,160);ctx.textAlign='left';
+ let y=headH;
+ laid.forEach(r=>{ctx.strokeStyle=C.line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(P,y);ctx.lineTo(W-P,y);ctx.stroke();
+  ctx.fillStyle=C.ink;ctx.font=F(700,24,body);r.kl.forEach((l,i)=>ctx.fillText(l,P,y+16+i*32));
+  if(r.st!==null){const tag=r.st?'완료':'미완';ctx.font=F(700,18,body);const tw=ctx.measureText(tag).width+20,ty=y+16+r.kl.length*32+6;
+   ctx.fillStyle=r.st?C.soft:C.mark;ctx.fillRect(P,ty,tw,28);ctx.fillStyle=r.st?C.accent:C.bad;ctx.fillText(tag,P+10,ty+4)}
+  ctx.fillStyle=C.ink;ctx.font=F(400,24,body);r.lines.forEach((l,i)=>ctx.fillText(l,VX,y+16+i*36));
+  y+=r.h});
+ ctx.strokeStyle=C.line;ctx.beginPath();ctx.moveTo(P,y);ctx.lineTo(W-P,y);ctx.stroke();
+ ctx.fillStyle=C.muted;ctx.font=F(400,20,body);ctx.fillText(WS.title+' 활동지에서 생성된 이미지',P,y+24);
+ return await new Promise(res=>cv.toBlob(res,'image/png'));
+}
+function fname(){const n=(S.num||'').trim()||'번호없음',m=(S.name||'').trim()||'이름없음';return `${n}번_${m}_${WS.file}.png`.replace(/[\\/:*?"<>|]/g,'')}
+async function dlCap(){try{return window.claude&&window.claude.use?await window.claude.use('downloads'):null}catch(e){return null}}
+$('#makePng').onclick=async()=>{const f=$('#pngFb');
+ if(!(S.num||'').trim()||!(S.name||'').trim()){say(f,false,'맨 위에 번호와 이름을 먼저 적어 주세요.');return}
+ say(f,null,'만드는 중…');
+ const blob=await makePng();if(!blob){say(f,false,'이미지를 만들지 못했어요. 다시 눌러 주세요.');return}
+ pngBlob=blob;pngStale=false;if(pngUrl)URL.revokeObjectURL(pngUrl);pngUrl=URL.createObjectURL(blob);
+ const img=$('#pngPrev');img.src=pngUrl;img.hidden=false;$('#pngHint').hidden=false;$('#savePng').hidden=false;
+ say(f,true,'이미지를 만들었어요. PNG 저장을 눌러 주세요.')};
+$('#savePng').onclick=async()=>{const f=$('#pngFb');if(!pngBlob)return;
+ const inArtifact=!!(window.claude&&window.claude.use);
+ if(!inArtifact){const a=document.createElement('a');a.href=pngUrl;a.download=fname();document.body.appendChild(a);a.click();a.remove();
+  say(f,true,'저장했어요. 다운로드 폴더의 파일을 첨부해서 제출하세요.');return}
+ const dl=await dlCap();
+ if(!dl){say(f,false,'여기서는 저장 버튼을 쓸 수 없어요. 이미지를 길게 누르거나 오른쪽 클릭해 저장해 주세요.');return}
+ try{await dl.save({filename:fname(),data:pngBlob});say(f,true,'저장했어요. 이 파일을 첨부해서 제출하세요.')}
+ catch(e){const c=e&&e.code;
+  if(c==='declined')say(f,null,'저장을 취소했어요.');
+  else if(c==='rate_limited')say(f,false,'저장 창이 이미 열려 있어요. 잠시 후 다시 눌러 주세요.');
+  else say(f,false,'여기서는 저장 버튼을 쓸 수 없어요. 이미지를 길게 누르거나 오른쪽 클릭해 저장해 주세요.')}};
+
+function finish(){
+ $$('[data-save]').forEach(el=>{if(S[el.id]!==undefined)el.value=S[el.id];
+  el.addEventListener('input',()=>{S[el.id]=el.value;save()});el.addEventListener('change',()=>{S[el.id]=el.value;save()})});
+ steps.forEach((_,i)=>$('#tab'+i).classList.toggle('done',!!S['done'+i]));
+ go(typeof S.tab==='number'?S.tab:0);
+}
+
+/* ---------- 활동 1 고객 정보 ---------- */
+const CUST=[
+ {code:'B-0002',name:'신짱구',tel:'2423-1246',grade:'B'},
+ {code:'A-0001',name:'홍길동',tel:'4123-4562',grade:'A'},
+ {code:'C-0001',name:'흰둥이',tel:'1547-3423',grade:'C'},
+ {code:'A-0002',name:'김철수',tel:'7342-1235',grade:'A'},
+ {code:'B-0001',name:'심청이',tel:'6789-5188',grade:'B'}];
+const COLS=[['code','고객 코드'],['name','이름'],['tel','전화번호'],['grade','고객 등급']];
+let custOrd='asc';
+function drawCust(){const k=$('#custKey').value;
+ const rows=CUST.slice().sort((a,b)=>{const r=a[k].localeCompare(b[k],'ko');return custOrd==='asc'?r:-r});
+ $('#cust').innerHTML='<tr>'+COLS.map(([c,l])=>`<th class="${c===k?'key':''}">${l}${c===k?(custOrd==='asc'?' ▲':' ▼'):''}</th>`).join('')+'</tr>'+
+  rows.map(r=>'<tr>'+COLS.map(([c])=>`<td>${r[c]}</td>`).join('')+'</tr>').join('')}
+$('#custKey').onchange=drawCust;
+$$('#custOrd button').forEach(b=>b.onclick=()=>{custOrd=b.dataset.v;$$('#custOrd button').forEach(x=>x.classList.toggle('on',x===b));drawCust()});
+drawCust();
+const TERMS1=['파일','레코드','필드','키'];
+['t1','t2','t3','t4'].forEach(id=>fillSelect(id,TERMS1));
+$('#a1Check').onclick=()=>{const want={t1:'레코드',t2:'필드',t3:'파일',t4:'키'};let ok=0;
+ for(const k in want){const r=$('#'+k).value===want[k];$('#'+k).style.borderColor=r?'var(--good)':'var(--bad)';if(r)ok++}
+ const n1=$('#q_name').value.trim()==='김철수',n2=$('#q_tel').value.trim()==='흰둥이';
+ $('#q_name').style.borderColor=n1?'var(--good)':'var(--bad)';$('#q_tel').style.borderColor=n2?'var(--good)':'var(--bad)';
+ const tot=ok+(n1?1:0)+(n2?1:0);S.a1Score=tot;
+ say($('#a1Fb'),tot===6,tot===6?'모두 맞았어요.':`${tot}/6 맞았어요. 표의 기준과 정렬 방향을 바꿔 가며 확인해 보세요.`);markDone(0,tot===6)};
+
+/* ---------- 활동 3 버블 정렬 ---------- */
+const BL=[[10,6,2,4,3],[7,9,6,2,1,3]];
+let B;
+function bInit(){const a=BL[+$('#bList').value].slice();B={arr:a,n:a.length,i:0,j:0,comp:0,swap:0,log:[],mist:0,done:false};$('#bFb').textContent='';bDraw()}
+function bDraw(){const {arr,n,i,j,done}=B;
+ $('#bArr').innerHTML=arr.map((x,k)=>{const cls=['box'];if(k>=n-i||done)cls.push('sorted');if(!done&&(k===j||k===j+1))cls.push('cur');
+  return `<div class="cw"><div class="${cls.join(' ')}">${x}</div><span class="lab">${!done&&k===j?'비교':''}${!done&&k===j+1?'비교':''}</span></div>`}).join('');
+ $('#bMsg').innerHTML=done?'<span class="done-msg">정렬 완료!</span>':`${i+1}단계: <b>${arr[j]}</b>와 <b>${arr[j+1]}</b>를 비교합니다. 앞의 값이 더 크면 교환하세요.`;
+ $('#bSwap').disabled=$('#bKeep').disabled=done;
+ $('#bLog').innerHTML=B.log.map(r=>`<tr><td>${r.p}단계</td><td class="n">${r.res.join(' ')}</td><td class="n">${r.c}</td><td class="n">${r.s}</td></tr>`).join('')+
+  (B.log.length?`<tr><th>합계</th><td></td><th class="n">${B.log.reduce((a,r)=>a+r.c,0)}</th><th class="n">${B.log.reduce((a,r)=>a+r.s,0)}</th></tr>`:'')}
+function bAct(doSwap){if(B.done)return;const {arr,j}=B,need=arr[j]>arr[j+1];
+ if(doSwap!==need){B.mist++;say($('#bFb'),false,need?`${arr[j]}이(가) ${arr[j+1]}보다 크니까 교환해야 해요.`:`${arr[j]}이(가) ${arr[j+1]}보다 작으니까 그대로 두어야 해요.`);return}
+ B.comp++;if(need){[arr[j],arr[j+1]]=[arr[j+1],arr[j]];B.swap++}
+ say($('#bFb'),true,need?`${arr[j+1]}, ${arr[j]} 비교 & 교환`:`${arr[j]}, ${arr[j+1]} 비교`);
+ B.j++;
+ if(B.j>B.n-2-B.i){B.log.push({p:B.i+1,res:arr.slice(),c:B.comp,s:B.swap});B.comp=0;B.swap=0;B.i++;B.j=0;
+  if(B.i>=B.n-1){B.done=true;S.bubble=S.bubble||{};const key=$('#bList').value;S.bubble[key]={mist:B.mist};save();
+   say($('#bFb'),true,`정렬 완료! 실수 ${B.mist}번. 단계마다 비교 횟수가 하나씩 줄어드는 것을 확인해 보세요.`)}}
+ bDraw()}
+$('#bSwap').onclick=()=>bAct(true);$('#bKeep').onclick=()=>bAct(false);
+$('#bList').onchange=bInit;$('#bReset').onclick=bInit;bInit();
+$('#bqCheck').onclick=()=>{const want={bq1:10,bq2:0,bq3:10,bq4:10};let ok=0;
+ for(const k in want){const el=$('#'+k),r=el.value.trim()!==''&&+el.value===want[k];el.style.borderColor=r?'var(--good)':'var(--bad)';if(r)ok++}
+ S.bqScore=ok;
+ say($('#bqFb'),ok===4,ok===4?'정답! 버블 정렬은 정렬되어 있어도 비교를 n(n−1)/2번 해요. 그래서 최선과 최악 모두 O(n²)입니다.':`${ok}/4 맞았어요. 힌트: 요소 5개면 단계마다 4, 3, 2, 1번 비교해요.`);markDone(1,ok===4)};
+
+/* ---------- 활동 5 삽입 정렬 ---------- */
+const IL=[[10,6,4,2,3,1,7],[7,9,6,2,1,3]];
+let I;
+function iInit(){const a=IL[+$('#iList').value].slice();I={arr:a,n:a.length,i:1,log:[],mist:0,done:false};$('#iFb').textContent='';iDraw()}
+function iDraw(){const {arr,n,i,done}=I;let h='';
+ for(let k=0;k<n;k++){
+  if(!done&&k<i){h+=`<div class="cw"><button class="slot" data-pos="${k}" aria-label="${k+1}번째 자리에 넣기">▼</button><span class="lab"></span></div>`}
+  if(!done&&k===i){h+=`<div class="cw"><button class="slot" data-pos="${i}" aria-label="제자리에 두기">▼</button><span class="lab"></span></div>`}
+  const cls=['box'];if(done||k<i)cls.push('sorted');if(!done&&k===i)cls.push('key');
+  h+=`<div class="cw"><div class="${cls.join(' ')}">${arr[k]}</div><span class="lab">${!done&&k===i?'삽입할 값':''}</span></div>`}
+ $('#iArr').innerHTML=h;
+ $$('#iArr .slot').forEach(s=>s.onclick=()=>iPick(+s.dataset.pos));
+ $('#iMsg').innerHTML=done?'<span class="done-msg">정렬 완료!</span>':`<b>${arr[i]}</b>을(를) 정렬된 영역의 알맞은 자리에 넣으세요. ▼ 표시를 누르면 그 자리에 들어갑니다.`;
+ $('#iLog').innerHTML=I.log.map(r=>`<tr><td>${r.p}</td><td class="n">${r.v}</td><td class="n">${r.res.join(' ')}</td><td class="n">${r.c}</td><td class="n">${r.m}</td></tr>`).join('')+
+  (I.log.length?`<tr><th>합계</th><td></td><td></td><th class="n">${I.log.reduce((a,r)=>a+r.c,0)}</th><th class="n">${I.log.reduce((a,r)=>a+r.m,0)}</th></tr>`:'')}
+function iPick(pos){if(I.done)return;const {arr,i}=I,key=arr[i];
+ let want=i;for(let k=0;k<i;k++)if(arr[k]>key){want=k;break}
+ if(pos!==want){I.mist++;say($('#iFb'),false,pos<want?`${key}은(는) ${arr[pos]}보다 크니까 더 오른쪽에 들어가야 해요.`:`${key}은(는) ${arr[pos-1]}보다 작으니까 더 왼쪽에 들어가야 해요.`);return}
+ const c=(i-want)+(want>0?1:0),m=i-want;
+ arr.splice(i,1);arr.splice(want,0,key);
+ I.log.push({p:I.log.length+1+'단계',v:key,res:arr.slice(),c,m});
+ say($('#iFb'),true,m?`${key}을(를) 삽입했어요. 정렬된 요소 ${m}개가 한 칸씩 뒤로 이동했어요.`:`${key}은(는) 이미 제자리예요. 비교 1번으로 끝났어요.`);
+ I.i++;if(I.i>=I.n){I.done=true;S.ins=S.ins||{};S.ins[$('#iList').value]={mist:I.mist};save();say($('#iFb'),true,`정렬 완료! 실수 ${I.mist}번.`)}
+ iDraw()}
+$('#iList').onchange=iInit;$('#iReset').onclick=iInit;iInit();
+$('#iqCheck').onclick=()=>{const want={iq1:4,iq2:0,iq3:10,iq4:10};let ok=0;
+ for(const k in want){const el=$('#'+k),r=el.value.trim()!==''&&+el.value===want[k];el.style.borderColor=r?'var(--good)':'var(--bad)';if(r)ok++}
+ S.iqScore=ok;
+ say($('#iqFb'),ok===4,ok===4?'정답! 정렬된 리스트는 n−1번 비교로 끝나요(O(n)). 역순이면 1+2+3+4 = n(n−1)/2번이에요(O(n²)).':`${ok}/4 맞았어요. 힌트: 정렬된 리스트는 요소마다 바로 앞 값과 한 번만 비교해요.`);markDone(2,ok===4)};
+
+/* ---------- 활동 7 실험 ---------- */
+let xSeed=1;
+function rnd(){xSeed=(xSeed*1103515245+12345)%2147483648;return xSeed/2147483648}
+function makeData(n,t){const a=Array.from({length:n},(_,k)=>k+1);
+ if(t==='reverse')return a.reverse();
+ if(t==='random'){for(let k=n-1;k>0;k--){const r=Math.floor(rnd()*(k+1));[a[k],a[r]]=[a[r],a[k]]}return a}
+ if(t==='nearly'){const sw=Math.max(1,Math.round(n/10));for(let s=0;s<sw;s++){const k=Math.floor(rnd()*(n-1));[a[k],a[k+1]]=[a[k+1],a[k]]}return a}
+ return a}
+function countBubble(a){a=a.slice();let c=0,s=0;const n=a.length;for(let i=0;i<n-1;i++)for(let j=0;j<n-1-i;j++){c++;if(a[j]>a[j+1]){[a[j],a[j+1]]=[a[j+1],a[j]];s++}}return [c,s]}
+function countIns(a){a=a.slice();let c=0,m=0;for(let i=1;i<a.length;i++){const key=a[i];let j=i-1;while(j>=0){c++;if(a[j]>key){a[j+1]=a[j];m++;j--}else break}a[j+1]=key}return [c,m]}
+function xRun(){const n=+$('#xN').value,t=$('#xType').value;$('#xNV').textContent=n;xSeed=S.xSeed||7;
+ const d=makeData(n,t),[bc,bs]=countBubble(d),[ic,im]=countIns(d);
+ const items=[['버블 · 비교',bc,''],['버블 · 교환',bs,''],['삽입 · 비교',ic,'b2'],['삽입 · 이동',im,'b2']],mx=Math.max(...items.map(x=>x[1]),1);
+ $('#xBars').innerHTML=items.map(([l,v,c])=>`<span>${l}</span><div><div class="bar ${c}" style="width:${v/mx*100}%"></div></div><span class="num">${v.toLocaleString('ko-KR')}</span>`).join('');
+ $('#xNote').textContent=`n = ${n}일 때 n(n−1)/2 = ${(n*(n-1)/2).toLocaleString('ko-KR')}. 데이터 상태를 '모두 정렬됨'과 '역순'으로 바꿔 두 알고리즘의 비교 횟수를 견주어 보세요.`}
+$('#xN').oninput=xRun;$('#xType').onchange=xRun;$('#xShuffle').onclick=()=>{S.xSeed=Math.floor(Math.random()*100000)+1;save();xRun()};xRun();
+['o1','o2','o3','o4'].forEach(id=>fillSelect(id,['O(1)','O(n)','O(n²)']));
+$('#oCheck').onclick=()=>{const want={o1:'O(n²)',o2:'O(n²)',o3:'O(n)',o4:'O(n²)',o5:'삽입 정렬'};let ok=0;
+ for(const k in want){const r=$('#'+k).value===want[k];$('#'+k).style.borderColor=r?'var(--good)':'var(--bad)';if(r)ok++}
+ S.oScore=ok;say($('#oFb'),ok===5,ok===5?'모두 맞았어요. 삽입 정렬은 데이터가 거의 정렬되어 있을 때 특히 빠릅니다.':`${ok}/5 맞았어요. 실험실에서 '모두 정렬됨'을 골라 두 알고리즘의 비교 횟수를 확인해 보세요.`);markDone(3,ok===5)};
+
+/* ---------- 활동 9 개념 정리 ---------- */
+const TERMS=['정렬','삽입 정렬','버블 정렬','퀵 정렬'];
+['c1','c2','c3','c4'].forEach(id=>fillSelect(id,TERMS));
+$('#cCheck').onclick=()=>{const want={c1:'버블 정렬',c2:'정렬',c3:'삽입 정렬',c4:'정렬'};let ok=0;
+ for(const k in want){const r=$('#'+k).value===want[k];$('#'+k).style.borderColor=r?'var(--good)':'var(--bad)';if(r)ok++}
+ S.cScore=ok;say($('#cFb'),ok===4,ok===4?'모두 맞았어요.':`${ok}/4 맞았어요.`);markDone(4,ok===4)};
+
+/* ---------- PNG 내용 ---------- */
+WS.rows=dash=>{const v=k=>(S[k]||'').trim();
+ const sim=(o,lbl)=>o?['0','1'].filter(k=>o[k]).map(k=>`${k==='0'?'교과서 예제':'도전'} 완료(실수 ${o[k].mist}번)`).join(', '):'아직 완료하지 않음';
+ return [
+ ['활동 1·2 · 정렬과 용어',`이름 오름차순 첫 고객: ${dash(v('q_name'))} / 전화번호 오름차순 첫 고객: ${dash(v('q_tel'))}\n용어: 행=${dash(v('t1'))}, 열=${dash(v('t2'))}, 표 전체=${dash(v('t3'))}, 기준=${dash(v('t4'))}  (${S.a1Score!==undefined?S.a1Score+'/6':'미확인'})`,!!S.done0],
+ ['활동 3 · 버블 정렬 직접 하기',sim(S.bubble),!!(S.bubble&&S.bubble['0'])],
+ ['활동 4 · 버블 정렬 횟수',`정렬된 리스트: 비교 ${dash(v('bq1'))}, 교환 ${dash(v('bq2'))}\n역순 리스트: 비교 ${dash(v('bq3'))}, 교환 ${dash(v('bq4'))}  (${S.bqScore!==undefined?S.bqScore+'/4':'미확인'})`,!!S.done1],
+ ['활동 5 · 삽입 정렬 직접 하기',sim(S.ins),!!(S.ins&&S.ins['0'])],
+ ['활동 6 · 삽입 정렬 횟수',`정렬된 리스트: 비교 ${dash(v('iq1'))}, 이동 ${dash(v('iq2'))}\n역순 리스트: 비교 ${dash(v('iq3'))}, 이동 ${dash(v('iq4'))}  (${S.iqScore!==undefined?S.iqScore+'/4':'미확인'})`,!!S.done2],
+ ['활동 8 · 수행 시간',`버블: 최선 ${dash(v('o1'))}, 최악 ${dash(v('o2'))} / 삽입: 최선 ${dash(v('o3'))}, 최악 ${dash(v('o4'))}\n거의 정렬된 데이터에 유리: ${dash(v('o5'))}  (${S.oScore!==undefined?S.oScore+'/5':'미확인'})`,!!S.done3],
+ ['활동 9 · 개념 정리',S.cScore!==undefined?`${S.cScore} / 4`:'미확인',!!S.done4]]};
+
+finish();
+
+})();
+</script>
+
+</body>
+</html>
