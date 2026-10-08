@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>문제 분해와 모델링 활동지</title>
+<style>[hidden]{display:none!important}img{max-width:100%}body{margin:0}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: 학습지 한 장을 탭 5개(수업 흐름 순서)로 나눈 단일 열 워크북. 상단 고정 진행 바. */
+:root{
+  --bg:#EEF3F1; --paper:#FFFFFF; --ink:#18302B; --muted:#5B706B; --line:#D3DFDB;
+  --accent:#1E7A62; --accent-soft:#DDEFE8; --marker:#F2B53A; --marker-soft:#FCEFCF;
+  --good:#1E7A62; --bad:#C2453A; --bad-soft:#F8E1DE;
+  --f-display:"Do Hyeon","IBM Plex Sans KR",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0F1A18; --paper:#162522; --ink:#E3EEEA; --muted:#93A9A3; --line:#2A3D39;
+  --accent:#4FC1A0; --accent-soft:#1D3A33; --marker:#F2B53A; --marker-soft:#3A3120;
+  --good:#4FC1A0; --bad:#EE7D72; --bad-soft:#3E2523; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1A18; --paper:#162522; --ink:#E3EEEA; --muted:#93A9A3; --line:#2A3D39;
+  --accent:#4FC1A0; --accent-soft:#1D3A33; --marker:#F2B53A; --marker-soft:#3A3120;
+  --good:#4FC1A0; --bad:#EE7D72; --bad-soft:#3E2523; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:860px;margin:0 auto}
+header.top{padding-block:24px 8px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:end;justify-content:space-between}
+.unit{font-size:12px;letter-spacing:.06em;color:var(--muted)}
+h1{font-family:var(--f-display);font-weight:400;font-size:32px;margin:2px 0 0;line-height:1.15;text-wrap:balance}
+.who{display:flex;gap:8px;flex-wrap:wrap}
+.who label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.cell input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.who input{width:120px}.who input#num{width:70px}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:10px;display:flex;gap:6px;overflow-x:auto;border-bottom:1px solid var(--line)}
+nav.tabs button{flex:1 0 auto;font:inherit;font-size:14px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;display:flex;gap:6px;align-items:center;white-space:nowrap}
+nav.tabs button .t{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+nav.tabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+nav.tabs button[aria-selected="true"] .t{color:var(--paper);opacity:.85}
+nav.tabs button.done::after{content:"✓";font-weight:700}
+section.step{padding-block:20px 0;display:flex;flex-direction:column;gap:18px}
+.step-head{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.step-head h2{font-family:var(--f-display);font-weight:400;font-size:26px;margin:0}
+.step-head .goal{color:var(--muted);font-size:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card h3{margin:0;font-size:16px;display:flex;gap:8px;align-items:center}
+.tag{font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:4px;background:var(--marker-soft);color:var(--ink);border:1px solid var(--marker)}
+.note{font-size:13.5px;color:var(--muted);margin:0}
+.term{background:linear-gradient(transparent 58%,var(--marker-soft) 58%);font-weight:700}
+.btn{font:inherit;font-size:14px;border:1px solid var(--accent);background:var(--accent);color:var(--paper);border-radius:6px;padding:7px 14px;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.fb{font-size:14px;min-height:1.4em;margin:0}
+.fb.ok{color:var(--good)}.fb.no{color:var(--bad)}
+textarea{width:100%;min-height:64px;resize:vertical}
+/* 사례 분류 */
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+.case{border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.case p{margin:0;font-weight:500}
+.seg{display:flex;gap:4px}
+.seg button{flex:1;font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:6px;padding:4px 6px;cursor:pointer}
+.seg button.on{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+.case.ok{border-color:var(--good)}.case.no{border-color:var(--bad);background:var(--bad-soft)}
+.states{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.states label{font-size:13px;color:var(--muted)}
+/* 스도쿠 */
+.sudo-wrap{display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start}
+.sudoku{display:grid;grid-template-columns:repeat(6,44px);grid-template-rows:repeat(6,44px);border:2px solid var(--ink);width:max-content}
+.cell{border:1px solid var(--line);display:grid;place-items:center;font-family:var(--f-mono);font-size:20px;position:relative}
+.cell.br{border-right:2px solid var(--ink)}.cell.bb{border-bottom:2px solid var(--ink)}
+.cell.given{color:var(--ink);font-weight:700}
+.cell input{width:100%;height:100%;border:0;border-radius:0;background:transparent;text-align:center;font-family:var(--f-mono);font-size:20px;color:var(--accent);padding:0}
+.cell.hl{background:var(--marker-soft)}
+.cell.wrong{background:var(--bad-soft)}.cell.wrong input{color:var(--bad)}
+.rules{margin:0;padding-left:18px;font-size:14px}
+/* 그래프 */
+.graph-wrap{overflow-x:auto}
+svg.kb{width:100%;max-width:520px;height:auto;display:block}
+svg.kb .edge{fill:none;stroke:var(--muted);stroke-width:5;cursor:pointer;stroke-linecap:round}
+svg.kb .edge:hover{stroke:var(--marker)}
+svg.kb .edge.used{stroke:var(--accent);stroke-dasharray:2 9}
+svg.kb .node circle{fill:var(--paper);stroke:var(--ink);stroke-width:2.5;cursor:pointer}
+svg.kb .node.cur circle{fill:var(--marker)}
+svg.kb .node text{fill:var(--ink);font-family:var(--f-display);font-size:22px;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.walk{font-family:var(--f-mono);font-size:14px;word-break:break-all}
+.deg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-width:420px}
+.deg label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:2px}
+.deg input{width:100%}
+/* 합 비교 */
+.bars{display:grid;grid-template-columns:auto 1fr auto;gap:8px 10px;align-items:center;font-size:14px}
+.bar{height:16px;border-radius:3px;background:var(--accent);min-width:3px;transition:width .2s}
+.bar.b2{background:var(--marker)}
+.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.algos{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.algo{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px}
+.algo b{display:block;margin-bottom:4px}
+.algo code{font-family:var(--f-mono);font-size:13px}
+/* 하노이 */
+.hanoi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.peg{position:relative;height:170px;border:1px solid var(--line);border-radius:8px;cursor:pointer;display:flex;flex-direction:column-reverse;align-items:center;padding-block:8px 28px;gap:2px;background:var(--paper)}
+.peg::before{content:"";position:absolute;bottom:28px;top:14px;left:50%;width:6px;margin-left:-3px;background:var(--line);border-radius:3px}
+.peg .lbl{position:absolute;bottom:4px;font-family:var(--f-display);font-size:18px}
+.peg.sel{border-color:var(--marker);box-shadow:0 0 0 2px var(--marker) inset}
+.disk{position:relative;height:20px;border-radius:5px;border:1.5px solid var(--ink)}
+.peg.sel .disk:last-of-type{transform:translateY(-8px)}
+.hstats{display:flex;gap:16px;flex-wrap:wrap;font-size:14px}
+.tbl-wrap{overflow-x:auto}
+table.moves{border-collapse:collapse;font-size:14px}
+table.moves th,table.moves td{border:1px solid var(--line);padding:6px 10px;text-align:center}
+table.moves th{background:var(--accent-soft);font-weight:500}
+table.moves input{width:56px;text-align:center}
+.recur{font-size:14.5px;display:flex;flex-direction:column;gap:6px}
+.recur select{padding:2px 4px}
+/* 정리 */
+.sum p{margin:0;line-height:2.2}
+.sum select{min-width:120px}
+.self{display:flex;flex-direction:column;gap:8px}
+.self .q{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center;border-bottom:1px dashed var(--line);padding-bottom:8px;font-size:14px}
+.png-prev{display:block;max-width:100%;width:520px;height:auto;border:1px solid var(--line);border-radius:6px}
+.pager{display:flex;justify-content:space-between;padding-block:20px 0}
+@media (max-width:480px){.sudoku{grid-template-columns:repeat(6,40px);grid-template-rows:repeat(6,40px)}h1{font-size:27px}.peg{height:150px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="top">
+  <div>
+    <div class="unit">Ⅲ. 알고리즘과 프로그래밍 · 1. 알고리즘 · 93~101쪽</div>
+    <h1>문제 분해와 모델링</h1>
+  </div>
+  <div class="who">
+    <label for="num">번호<input id="num" inputmode="numeric" autocomplete="off"></label>
+    <label for="name">이름<input id="name" autocomplete="off"></label>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" id="tabs"></nav>
+
+<!-- 1. 도입 -->
+<section class="step" data-step="0" data-title="도입" data-time="5분">
+  <div class="step-head"><h2>컴퓨터로 풀 수 있는 문제일까?</h2><span class="goal">문제 상태와 수행 과정이 명확한지 판단하기</span></div>
+  <div class="card">
+    <h3><span class="tag">활동 1</span>문제 분류하기</h3>
+    <p class="note">각 문제의 <span class="term">초기 상태</span>, <span class="term">목표 상태</span>, <span class="term">수행 과정</span>이 명확한지 생각해 보고 고르세요.</p>
+    <div class="cases" id="cases"></div>
+    <div class="row"><button class="btn" id="caseCheck">확인하기</button><p class="fb" id="caseFb"></p></div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 2</span>로봇 문제의 상태 적기</h3>
+    <p class="note">로봇이 파란 타일로 가서 불을 켜는 문제입니다. 명령은 직진, 좌회전, 우회전, 한 칸 점프, 불 켜기 5개만 쓸 수 있어요.</p>
+    <div class="states">
+      <label for="s_init">초기 상태</label><input id="s_init" data-save>
+      <label for="s_goal">목표 상태</label><input id="s_goal" data-save>
+      <label for="s_proc">수행 과정</label><input id="s_proc" data-save>
+    </div>
+  </div>
+</section>
+
+<!-- 2. 문제 분해 -->
+<section class="step" data-step="1" data-title="문제 분해" data-time="12분" hidden>
+  <div class="step-head"><h2>작게 나누면 풀린다</h2><span class="goal">복잡한 문제를 작은 문제로 분해하기</span></div>
+  <div class="card">
+    <p class="note" style="color:var(--ink)"><span class="term">문제 분해</span>란 복잡한 문제를 해결하기 쉬운 작은 문제로 나누는 것입니다. 교과서 95쪽의 날짜 상자 정렬처럼, 반으로 나누고(분할) 작은 것부터 해결해 합치면(정복) 전체 문제가 풀립니다.</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 3</span>6×6 스도쿠를 분해해서 풀기</h3>
+    <div class="sudo-wrap">
+      <div>
+        <div class="row" style="margin-bottom:8px">
+          <label for="mode" class="note">나누는 기준</label>
+          <select id="mode"><option value="box">구역</option><option value="row">행</option><option value="col">열</option></select>
+        </div>
+        <div class="sudoku" id="sudoku"></div>
+      </div>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">
+        <ul class="rules">
+          <li>각 행에 1~6이 한 번씩</li>
+          <li>각 열에 1~6이 한 번씩</li>
+          <li>각 구역(2×3)에 1~6이 한 번씩</li>
+        </ul>
+        <p class="note">칸을 누르면 선택한 기준(구역·행·열)에 해당하는 칸이 노랗게 표시됩니다. 빈칸이 하나뿐인 작은 문제부터 찾아보세요.</p>
+        <div class="row"><button class="btn" id="sudoCheck">채점하기</button><button class="btn ghost" id="sudoClear">지우기</button></div>
+        <p class="fb" id="sudoFb"></p>
+      </div>
+    </div>
+    <label for="sudoQ" class="note">어떤 기준으로 나눴을 때 가장 먼저 숫자를 찾을 수 있었나요? 왜 그런가요?</label>
+    <textarea id="sudoQ" data-save></textarea>
+  </div>
+</section>
+
+<!-- 3. 모델링 -->
+<section class="step" data-step="2" data-title="모델링" data-time="12분" hidden>
+  <div class="step-head"><h2>지도를 그래프로</h2><span class="goal">핵심 요소만 남겨 구조적으로 표현하기</span></div>
+  <div class="card">
+    <p class="note" style="color:var(--ink)"><span class="term">추상화</span>는 불필요한 요소를 빼고 핵심 요소만 남기는 것, <span class="term">모델링</span>은 그 핵심 요소들의 관계를 단순한 구조로 표현하는 것입니다. 지하철 노선도는 위성 지도를 모델링한 결과예요.</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 4</span>쾨니히스베르크의 다리 건너기</h3>
+    <p class="note">땅(A~D)은 점으로, 다리 7개는 선으로 모델링했습니다. 출발할 점을 누른 뒤 다리를 하나씩 눌러 건너 보세요. 모든 다리를 한 번씩만 건너 출발점으로 돌아올 수 있을까요?</p>
+    <div class="graph-wrap"><svg class="kb" id="kb" viewBox="0 0 520 340" role="img" aria-label="쾨니히스베르크 다리 그래프"></svg></div>
+    <div class="row"><span class="num" id="walkCount">건넌 다리 0 / 7</span><button class="btn ghost" id="walkReset">처음부터</button></div>
+    <div class="walk" id="walkPath">출발할 점을 누르세요.</div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 5</span>점의 차수로 판단하기</h3>
+    <p class="note">각 점에 연결된 선(다리)의 수를 세어 적으세요. 연결된 선이 홀수 개인 점을 <b>홀수 점</b>이라고 합니다.</p>
+    <div class="deg">
+      <label for="dA">A<input id="dA" inputmode="numeric" data-save></label>
+      <label for="dB">B<input id="dB" inputmode="numeric" data-save></label>
+      <label for="dC">C<input id="dC" inputmode="numeric" data-save></label>
+      <label for="dD">D<input id="dD" inputmode="numeric" data-save></label>
+    </div>
+    <div class="row">
+      <label for="kbAns" class="note">결론</label>
+      <select id="kbAns" data-save><option value="">선택</option><option value="yes">가능하다</option><option value="no">불가능하다</option></select>
+      <button class="btn" id="kbCheck">확인하기</button>
+    </div>
+    <p class="fb" id="kbFb"></p>
+    <p class="note">오일러의 한붓그리기: 홀수 점이 0개면 출발점으로 돌아올 수 있고, 2개면 출발점과 도착점이 다르며, 그 밖의 경우는 불가능합니다.</p>
+  </div>
+</section>
+
+<!-- 4. 성능 분석 -->
+<section class="step" data-step="3" data-title="성능 분석" data-time="15분" hidden>
+  <div class="step-head"><h2>어떤 알고리즘이 더 빠를까?</h2><span class="goal">연산 횟수로 수행 시간 비교하기</span></div>
+  <div class="card">
+    <h3><span class="tag">활동 6</span>1부터 n까지의 합</h3>
+    <div class="algos">
+      <div class="algo"><b>알고리즘 1 · 하나씩 더하기</b><code>s = s + n</code>을 n번 반복</div>
+      <div class="algo"><b>알고리즘 2 · 공식 사용</b><code>s = n × (n + 1) / 2</code> 한 번 계산</div>
+    </div>
+    <div class="row"><label for="nSum" class="note">n =</label><input type="range" id="nSum" min="1" max="1000" value="10" style="flex:1;min-width:140px"><span class="num" id="nSumV">10</span></div>
+    <div class="bars">
+      <span>알고리즘 1</span><div><div class="bar" id="b1"></div></div><span class="num" id="b1v"></span>
+      <span>알고리즘 2</span><div><div class="bar b2" id="b2"></div></div><span class="num" id="b2v"></span>
+    </div>
+    <p class="note">합계는 둘 다 <span class="num" id="sumV"></span>로 같습니다. 연산 횟수가 n에 비례하면 <b>O(n)</b>, n과 상관없이 일정하면 <b>O(1)</b>로 나타냅니다.</p>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 7</span>하노이 탑</h3>
+    <p class="note">원반을 모두 A에서 C로 옮기세요. 한 번에 하나씩, 맨 위 원반만 옮길 수 있고 큰 원반을 작은 원반 위에 올릴 수 없습니다. 기둥을 눌러 원반을 집고, 다른 기둥을 눌러 내려놓으세요.</p>
+    <div class="row">
+      <label for="hn" class="note">원반 수</label>
+      <select id="hn"><option>1</option><option>2</option><option selected>3</option><option>4</option><option>5</option></select>
+      <button class="btn ghost" id="hReset">다시 시작</button>
+    </div>
+    <div class="hanoi" id="hanoi"></div>
+    <div class="hstats"><span>이동 횟수 <b class="num" id="hMoves">0</b></span><span class="fb" id="hFb"></span></div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">활동 8</span>규칙 찾기와 모델링</h3>
+    <p class="note">직접 옮겨 본 최소 이동 횟수를 적고, 원반이 4개·5개일 때를 예측해 보세요.</p>
+    <div class="tbl-wrap"><table class="moves"><tr><th>원반 수 n</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+      <tr><th>최소 이동 횟수</th><td><input id="m1" inputmode="numeric" data-save></td><td><input id="m2" inputmode="numeric" data-save></td><td><input id="m3" inputmode="numeric" data-save></td><td><input id="m4" inputmode="numeric" data-save></td><td><input id="m5" inputmode="numeric" data-save></td></tr></table></div>
+    <div class="recur">
+      <span>• n이 1인 경우: 1번 원반을 현재 위치에서 <select id="r1" data-save></select>로 이동</span>
+      <span>• n이 1이 아닌 경우: n-1번까지의 원반을 <select id="r2" data-save></select>로 이동</span>
+      <span style="padding-left:1.2em">n번 원반을 <select id="r3" data-save></select>로 이동</span>
+      <span style="padding-left:1.2em">n-1번까지의 원반을 <select id="r4" data-save></select>에서 <select id="r5" data-save></select>로 이동</span>
+    </div>
+    <div class="row"><button class="btn" id="hCheck">확인하기</button></div>
+    <p class="fb" id="hCheckFb"></p>
+  </div>
+</section>
+
+<!-- 5. 정리 -->
+<section class="step" data-step="4" data-title="정리" data-time="6분" hidden>
+  <div class="step-head"><h2>개념 정리</h2><span class="goal">주요 용어 확인과 성취도 점검</span></div>
+  <div class="card sum">
+    <h3><span class="tag">활동 9</span>알맞은 용어 고르기</h3>
+    <p><select id="c1" data-save></select>와 수행 과정이 명확한 문제는 컴퓨팅 시스템으로 해결할 수 있다.</p>
+    <p><select id="c2" data-save></select>에서 복잡한 문제를 쉬운 작은 문제로 나누는 것을 <select id="c3" data-save></select>라고 한다.</p>
+    <p><select id="c4" data-save></select>는 불필요한 요소는 제거하고 핵심 요소만 남기는 것이고, <select id="c5" data-save></select>은 복잡한 상태를 단순하게 구조적으로 표현한 결과이다.</p>
+    <div class="row"><button class="btn" id="cCheck">확인하기</button><p class="fb" id="cFb"></p></div>
+  </div>
+  <div class="card">
+    <h3><span class="tag">성취도 평가</span>스스로 점검하기</h3>
+    <div class="self" id="self"></div>
+  </div>
+  <div class="card">
+    <h3>제출하기</h3>
+    <p class="note">결과 이미지를 만들어 PNG 파일로 저장한 뒤, 선생님이 안내한 곳에 첨부하세요. 활동 내용을 고쳤다면 이미지를 다시 만들어 주세요.</p>
+    <div class="row"><button class="btn" id="makePng">결과 이미지 만들기</button><button class="btn ghost" id="savePng" hidden>PNG 저장</button><span class="fb" id="pngFb"></span></div>
+    <img id="pngPrev" class="png-prev" alt="제출용 결과 이미지" hidden>
+    <p class="note" id="pngHint" hidden>저장 버튼이 동작하지 않으면 이미지를 길게 눌러(휴대폰) 또는 오른쪽 클릭해서(컴퓨터) '이미지 저장'을 고르세요.</p>
+  </div>
+</section>
+<div class="pager"><button class="btn ghost" id="prev">← 이전</button><button class="btn" id="next">다음 →</button></div>
+</div>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const KEY='decomp-model-ws-v1';
+let S={};
+try{S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){S={}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){} buildReport();}
+
+/* ---------- 탭 ---------- */
+const steps=$$('section.step'); let cur=0;
+const tabs=$('#tabs');
+steps.forEach((sec,i)=>{const b=document.createElement('button');b.role='tab';b.id='tab'+i;
+  b.textContent=sec.dataset.title;b.onclick=()=>go(i);tabs.appendChild(b)});
+function go(i){cur=Math.max(0,Math.min(steps.length-1,i));
+  steps.forEach((s,k)=>s.hidden=k!==cur);
+  $$('#tabs button').forEach((b,k)=>b.setAttribute('aria-selected',k===cur));
+  $('#prev').disabled=cur===0;$('#next').textContent=cur===steps.length-1?'처음으로':'다음 →';
+  window.scrollTo({top:0});S.tab=cur;save()}
+$('#prev').onclick=()=>go(cur-1);
+$('#next').onclick=()=>go(cur===steps.length-1?0:cur+1);
+function markDone(i,ok){S['done'+i]=ok;$('#tab'+i).classList.toggle('done',!!ok);save()}
+
+/* ---------- 이름, 자유 입력 저장 ---------- */
+['num','name'].forEach(id=>{const el=$('#'+id);el.value=S[id]||'';el.oninput=()=>{S[id]=el.value;save()}});
+
+/* ---------- 활동 1 사례 분류 ---------- */
+const CASES=[
+ ['시청에서 공항 가는 최소 환승 경로 찾기',1],
+ ['3~57까지의 자연수 중 짝수의 개수 구하기',1],
+ ['맛있는 메뉴 정하기',0],
+ ['서울 여행 코스 만들기',0],
+ ['로봇이 파란 타일로 가서 불 켜기',1],
+ ['서울역에서 출발해 8시간 동안 관광할 수 있는 모든 관광지 추천',1]];
+S.cases=S.cases||{};
+CASES.forEach(([t],i)=>{const d=document.createElement('div');d.className='case';d.id='case'+i;
+ d.innerHTML=`<p>${t}</p><div class="seg"><button data-v="1">해결할 수 있다</button><button data-v="0">해결하기 어렵다</button></div>`;
+ d.querySelectorAll('button').forEach(b=>{b.onclick=()=>{S.cases[i]=+b.dataset.v;paintCase(i);d.classList.remove('ok','no');save()}});
+ $('#cases').appendChild(d);paintCase(i)});
+function paintCase(i){$$('#case'+i+' button').forEach(b=>b.classList.toggle('on',S.cases[i]===+b.dataset.v))}
+$('#caseCheck').onclick=()=>{let ok=0,miss=0;CASES.forEach(([,a],i)=>{const d=$('#case'+i);d.classList.remove('ok','no');
+  if(S.cases[i]===undefined){miss++;return}const r=S.cases[i]===a;d.classList.add(r?'ok':'no');if(r)ok++});
+  const fb=$('#caseFb');
+  if(miss){fb.className='fb no';fb.textContent=`아직 고르지 않은 문제가 ${miss}개 있어요.`;return}
+  fb.className='fb '+(ok===CASES.length?'ok':'no');
+  fb.textContent=ok===CASES.length?'모두 맞았어요. 상태와 과정이 명확한 문제는 컴퓨터로 해결할 수 있습니다.':`${ok}/${CASES.length} 맞았어요. 빨간 문제의 상태와 과정을 다시 생각해 보세요.`;
+  S.caseScore=ok;markDone(0,ok===CASES.length)};
+
+/* 자유 입력 공통 */
+function bindSave(){ $$('[data-save]').forEach(el=>{if(S[el.id]!==undefined)el.value=S[el.id];
+  el.addEventListener('input',()=>{S[el.id]=el.value;save()});el.addEventListener('change',()=>{S[el.id]=el.value;save()})})}
+
+/* ---------- 활동 3 스도쿠 ---------- */
+const G=[[4,5,2,0,3,6],[1,0,6,0,2,0],[0,2,5,0,0,0],[3,0,0,6,0,2],[5,6,0,2,0,3],[0,1,3,5,6,4]];
+const SOL=[[4,5,2,1,3,6],[1,3,6,4,2,5],[6,2,5,3,4,1],[3,4,1,6,5,2],[5,6,4,2,1,3],[2,1,3,5,6,4]];
+S.sudo=S.sudo||{};
+const sd=$('#sudoku');
+for(let r=0;r<6;r++)for(let c=0;c<6;c++){const d=document.createElement('div');d.className='cell';d.dataset.r=r;d.dataset.c=c;
+ if(c===2)d.classList.add('br');if(r===1||r===3)d.classList.add('bb');
+ if(G[r][c]){d.classList.add('given');d.textContent=G[r][c]}
+ else{const inp=document.createElement('input');inp.id=`sd${r}${c}`;inp.maxLength=1;inp.inputMode='numeric';inp.setAttribute('aria-label',`${r+1}행 ${c+1}열`);
+  inp.value=S.sudo[r+''+c]||'';
+  inp.oninput=()=>{inp.value=inp.value.replace(/[^1-6]/g,'');S.sudo[r+''+c]=inp.value;d.classList.remove('wrong');save()};
+  inp.onfocus=()=>hl(r,c);d.appendChild(inp)}
+ d.addEventListener('click',()=>hl(r,c));sd.appendChild(d)}
+let last=[0,0];
+function hl(r,c){last=[r,c];const m=$('#mode').value;$$('.cell').forEach(d=>{const R=+d.dataset.r,C=+d.dataset.c;
+ const on=m==='row'?R===r:m==='col'?C===c:(Math.floor(R/2)===Math.floor(r/2)&&Math.floor(C/3)===Math.floor(c/3));d.classList.toggle('hl',on)})}
+$('#mode').onchange=()=>hl(...last);
+$('#sudoCheck').onclick=()=>{let empty=0,wrong=0;for(let r=0;r<6;r++)for(let c=0;c<6;c++){if(G[r][c])continue;
+  const v=+(S.sudo[r+''+c]||0),cell=$(`#sd${r}${c}`).parentNode;cell.classList.remove('wrong');
+  if(!v)empty++;else if(v!==SOL[r][c]){wrong++;cell.classList.add('wrong')}}
+  const fb=$('#sudoFb');
+  if(!empty&&!wrong){fb.className='fb ok';fb.textContent='완성! 작은 문제들을 차례로 풀어 전체 퍼즐을 해결했어요.';markDone(1,true)}
+  else{fb.className='fb no';fb.textContent=`빈칸 ${empty}개, 틀린 칸 ${wrong}개가 있어요.`;markDone(1,false)}};
+$('#sudoClear').onclick=()=>{S.sudo={};$$('.cell input').forEach(i=>{i.value='';i.parentNode.classList.remove('wrong')});$('#sudoFb').textContent='';save()};
+
+/* ---------- 활동 4 쾨니히스베르크 ---------- */
+const P={A:[190,170],B:[300,48],C:[300,292],D:[440,170]};
+const E=[['A','B',-40],['A','B',40],['A','C',-40],['A','C',40],['A','D',0],['B','D',0],['C','D',0]];
+const svg=$('#kb'),NS='http://www.w3.org/2000/svg';
+function qpath(a,b,off){const [x1,y1]=P[a],[x2,y2]=P[b],mx=(x1+x2)/2,my=(y1+y2)/2,dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);
+ const cx=mx-dy/L*off,cy=my+dx/L*off;return `M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}`}
+let walk={at:null,used:[],path:[]};
+E.forEach((e,i)=>{const p=document.createElementNS(NS,'path');p.setAttribute('d',qpath(...e));p.setAttribute('class','edge');p.id='e'+i;
+ p.addEventListener('click',()=>cross(i));svg.appendChild(p)});
+Object.keys(P).forEach(k=>{const g=document.createElementNS(NS,'g');g.setAttribute('class','node');g.id='n'+k;
+ g.innerHTML=`<circle cx="${P[k][0]}" cy="${P[k][1]}" r="22"></circle><text x="${P[k][0]}" y="${P[k][1]}">${k}</text>`;
+ g.addEventListener('click',()=>start(k));svg.appendChild(g)});
+function start(k){if(walk.used.length)return;walk={at:k,used:[],path:[k]};paintWalk('출발! 이어서 건널 다리를 누르세요.')}
+function cross(i){const fb=$('#walkPath');if(!walk.at){fb.textContent='먼저 출발할 점을 누르세요.';return}
+ if(walk.used.includes(i)){paintWalk('이미 건넌 다리예요.');return}
+ const [a,b]=E[i];if(a!==walk.at&&b!==walk.at){paintWalk(`${walk.at}에 연결된 다리만 건널 수 있어요.`);return}
+ walk.at=a===walk.at?b:a;walk.used.push(i);walk.path.push(walk.at);
+ const left=E.some((e,j)=>!walk.used.includes(j)&&(e[0]===walk.at||e[1]===walk.at));
+ let msg='';if(walk.used.length===7)msg=walk.at===walk.path[0]?'모든 다리를 건너 출발점으로 돌아왔어요!':'모든 다리를 건넜지만 출발점이 아니에요.';
+ else if(!left)msg='더 이상 건널 다리가 없어요. 다른 점에서 다시 시작해 보세요.';
+ paintWalk(msg)}
+function paintWalk(msg){E.forEach((e,i)=>$('#e'+i).classList.toggle('used',walk.used.includes(i)));
+ Object.keys(P).forEach(k=>$('#n'+k).classList.toggle('cur',walk.at===k));
+ $('#walkCount').textContent=`건넌 다리 ${walk.used.length} / 7`;
+ $('#walkPath').textContent=(walk.path.length?'경로: '+walk.path.join(' → '):'')+(msg?'  '+msg:'');
+ S.tries=(S.tries||0);}
+$('#walkReset').onclick=()=>{S.tries=(S.tries||0)+1;walk={at:null,used:[],path:[]};paintWalk('출발할 점을 누르세요.');save()};
+$('#kbCheck').onclick=()=>{const want={A:5,B:3,C:3,D:3};let bad=[];
+ for(const k in want)if(+$('#d'+k).value!==want[k])bad.push(k);
+ const fb=$('#kbFb');
+ if(bad.length){fb.className='fb no';fb.textContent=`${bad.join(', ')}의 선 개수를 다시 세어 보세요.`;markDone(2,false);return}
+ if($('#kbAns').value!=='no'){fb.className='fb no';fb.textContent='차수는 맞았어요. 홀수 점이 몇 개인지 보고 결론을 다시 골라 보세요.';markDone(2,false);return}
+ fb.className='fb ok';fb.textContent='정답! 홀수 점이 4개이므로 모든 다리를 한 번씩만 건너는 것은 불가능합니다.';markDone(2,true)};
+
+/* ---------- 활동 6 합 비교 ---------- */
+function sumUpd(){const n=+$('#nSum').value;$('#nSumV').textContent=n;const mx=Math.max(n,3);
+ $('#b1').style.width=(n/mx*100)+'%';$('#b2').style.width=(3/mx*100)+'%';
+ $('#b1v').textContent=n+'회';$('#b2v').textContent='3회';$('#sumV').textContent=(n*(n+1)/2).toLocaleString('ko-KR')}
+$('#nSum').oninput=sumUpd;sumUpd();
+
+/* ---------- 활동 7 하노이 ---------- */
+let H={n:3,pegs:[[],[],[]],sel:null,moves:0};
+const HUES=['#E06B5B','#E8A33D','#5BAE7E','#4A90C2','#8C6BC2'];
+function hInit(){H.n=+$('#hn').value;H.pegs=[[],[],[]];for(let d=H.n;d>=1;d--)H.pegs[0].push(d);H.sel=null;H.moves=0;$('#hFb').textContent='';hDraw()}
+function hDraw(){const box=$('#hanoi');box.innerHTML='';
+ H.pegs.forEach((pg,i)=>{const p=document.createElement('div');p.className='peg'+(H.sel===i?' sel':'');p.tabIndex=0;p.setAttribute('role','button');
+  p.setAttribute('aria-label',`기둥 ${'ABC'[i]}, 원반 ${pg.length}개`);
+  pg.forEach(d=>{const k=document.createElement('div');k.className='disk';k.style.width=(28+d*14)+'%';k.style.background=HUES[d-1];p.appendChild(k)});
+  const l=document.createElement('span');l.className='lbl';l.textContent='ABC'[i];p.appendChild(l);
+  p.onclick=()=>hClick(i);p.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();hClick(i)}};box.appendChild(p)});
+ $('#hMoves').textContent=H.moves}
+function hClick(i){const fb=$('#hFb');
+ if(H.pegs[2].length===H.n)return;
+ if(H.sel===null){if(!H.pegs[i].length)return;H.sel=i;fb.textContent='';hDraw();return}
+ if(H.sel===i){H.sel=null;hDraw();return}
+ const from=H.pegs[H.sel],to=H.pegs[i],d=from[from.length-1];
+ if(to.length&&to[to.length-1]<d){fb.className='fb no';fb.textContent='큰 원반을 작은 원반 위에 올릴 수 없어요.';H.sel=null;hDraw();return}
+ to.push(from.pop());H.sel=null;H.moves++;hDraw();
+ if(H.pegs[2].length===H.n){const min=2**H.n-1;
+  fb.className='fb ok';fb.textContent=H.moves===min?`성공! ${H.moves}번, 최소 횟수로 옮겼어요.`:`성공! ${H.moves}번 만에 옮겼어요. 더 적게 옮길 수 있을까요?`;
+  S.hanoiBest=S.hanoiBest||{};if(!S.hanoiBest[H.n]||H.moves<S.hanoiBest[H.n])S.hanoiBest[H.n]=H.moves;save()}}
+$('#hn').onchange=hInit;$('#hReset').onclick=hInit;hInit();
+
+const ABC='<option value="">?</option><option>A</option><option>B</option><option>C</option>';
+['r1','r2','r3','r4','r5'].forEach(id=>$('#'+id).innerHTML=ABC);
+$('#hCheck').onclick=()=>{const want={m1:1,m2:3,m3:7,m4:15,m5:31},rw={r1:'C',r2:'B',r3:'C',r4:'B',r5:'C'};
+ let bad=0;for(const k in want)if(+$('#'+k).value!==want[k])bad++;let rb=0;for(const k in rw)if($('#'+k).value!==rw[k])rb++;
+ const fb=$('#hCheckFb');
+ if(!bad&&!rb){fb.className='fb ok';fb.textContent='정답! 이동 횟수는 2ⁿ − 1이고, 원반이 하나 늘 때마다 약 2배가 됩니다. n−1개 문제를 두 번 풀고 1번 더 옮기는 구조예요.';markDone(3,true)}
+ else{fb.className='fb no';fb.textContent=`이동 횟수 ${bad}칸, 모델링 빈칸 ${rb}칸을 다시 확인해 보세요. 힌트: 1→3→7, 앞의 값을 2배 하고 1을 더해 보세요.`;markDone(3,false)}};
+
+/* ---------- 활동 9 개념 정리 ---------- */
+const TERMS=['문제 상태','문제 해결 과정','추상화','문제 분해','모델링'];
+const CW={c1:'문제 상태',c2:'문제 해결 과정',c3:'문제 분해',c4:'추상화',c5:'모델링'};
+Object.keys(CW).forEach(id=>$('#'+id).innerHTML='<option value="">선택</option>'+TERMS.map(t=>`<option>${t}</option>`).join(''));
+$('#cCheck').onclick=()=>{let ok=0;for(const k in CW){const r=$('#'+k).value===CW[k];$('#'+k).style.borderColor=r?'var(--good)':'var(--bad)';if(r)ok++}
+ const fb=$('#cFb');fb.className='fb '+(ok===5?'ok':'no');fb.textContent=ok===5?'모두 맞았어요.':`${ok}/5 맞았어요.`;S.cScore=ok;markDone(4,ok===5)};
+
+const SELF=['정보 과학적으로 해결할 수 있는 문제를 구별할 수 있는가?','복잡한 문제를 해결 가능한 작은 문제로 분해할 수 있는가?','문제를 모델링하고 알고리즘의 수행 시간을 비교할 수 있는가?'];
+S.self=S.self||{};
+SELF.forEach((q,i)=>{const d=document.createElement('div');d.className='q';d.innerHTML=`<span>${q}</span><div class="seg" style="min-width:160px"><button data-v="예">예</button><button data-v="아니요">아니요</button></div>`;
+ d.querySelectorAll('button').forEach(b=>{b.classList.toggle('on',S.self[i]===b.dataset.v);b.onclick=()=>{S.self[i]=b.dataset.v;d.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));save()}});
+ $('#self').appendChild(d)});
+
+/* ---------- 제출용 PNG ---------- */
+let pngBlob=null,pngUrl=null,pngStale=false;
+function buildReport(){if(pngBlob&&!pngStale){pngStale=true;const fb=$('#pngFb');fb.className='fb no';fb.textContent='내용이 바뀌었어요. 이미지를 다시 만들어 주세요.'}}
+function wrap(ctx,text,maxW){const out=[];String(text).split('\n').forEach(par=>{let line='';
+ for(const ch of par){const t=line+ch;if(ctx.measureText(t).width>maxW&&line){out.push(line);line=ch}else line=t}
+ out.push(line)});return out}
+async function makePng(){
+ try{await document.fonts.ready}catch(e){}
+ const v=id=>(S[id]||'').trim(), dash=x=>x||'-';
+ const W=1080,P=56,LW=250,VX=P+LW,VW=W-VX-P;
+ const C={bg:'#FFFFFF',ink:'#18302B',muted:'#5B706B',line:'#D3DFDB',accent:'#1E7A62',soft:'#DDEFE8',bad:'#C2453A',mark:'#FCEFCF'};
+ const F=(w,sz,fam)=>`${w} ${sz}px ${fam}`, body='"IBM Plex Sans KR","Malgun Gothic",sans-serif', disp='"Do Hyeon","IBM Plex Sans KR",sans-serif';
+ const ok=b=>b?'정답':'확인 필요';
+ const rows=[
+  ['활동 1 · 문제 분류',S.caseScore!==undefined?`${S.caseScore} / 6`:'미확인',S.caseScore===6],
+  ['활동 2 · 로봇 문제 상태',`초기 상태: ${dash(v('s_init'))}\n목표 상태: ${dash(v('s_goal'))}\n수행 과정: ${dash(v('s_proc'))}`,null],
+  ['활동 3 · 스도쿠 분해',`${S.done1?'완성':'미완성'}\n생각: ${dash(v('sudoQ'))}`,!!S.done1],
+  ['활동 5 · 다리 문제',`차수 A ${dash(v('dA'))}, B ${dash(v('dB'))}, C ${dash(v('dC'))}, D ${dash(v('dD'))}\n결론: ${S.kbAns==='no'?'불가능하다':S.kbAns==='yes'?'가능하다':'-'} (${ok(S.done2)})`,!!S.done2],
+  ['활동 7·8 · 하노이 탑',`최소 이동 횟수: ${['m1','m2','m3','m4','m5'].map(k=>dash(v(k))).join(', ')}\n모델링: ${ok(S.done3)}\n직접 옮긴 기록: ${S.hanoiBest&&Object.keys(S.hanoiBest).length?Object.entries(S.hanoiBest).map(([n,m])=>`원반 ${n}개 ${m}회`).join(', '):'-'}`,!!S.done3],
+  ['활동 9 · 개념 정리',S.cScore!==undefined?`${S.cScore} / 5`:'미확인',S.cScore===5],
+  ['성취도 자기 점검',SELF.map((q,i)=>`${i+1}. ${(S.self&&S.self[i])||'-'}`).join('   '),null]];
+ const cv=document.createElement('canvas'),ctx=cv.getContext('2d');
+ ctx.font=F(400,24,body);
+ const laid=rows.map(([k,t,st])=>{const lines=wrap(ctx,t,VW);return {k,lines,st,h:Math.max(1,lines.length)*36+28}});
+ const headH=210,footH=70,H=headH+laid.reduce((a,r)=>a+r.h,0)+footH;
+ cv.width=W;cv.height=H;
+ ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
+ ctx.fillStyle=C.accent;ctx.fillRect(0,0,W,10);
+ ctx.textBaseline='top';
+ ctx.fillStyle=C.muted;ctx.font=F(400,22,body);ctx.fillText('Ⅲ. 알고리즘과 프로그래밍 · 1. 알고리즘 · 93~101쪽',P,44);
+ ctx.fillStyle=C.ink;ctx.font=F(400,52,disp);ctx.fillText('문제 분해와 모델링 활동 결과',P,80);
+ const d=new Date(),stamp=`${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+ ctx.font=F(700,30,body);ctx.fillText(`${dash(v('num'))}번  ${dash(v('name'))}`,P,152);
+ ctx.font=F(400,22,body);ctx.fillStyle=C.muted;ctx.textAlign='right';ctx.fillText(stamp,W-P,160);ctx.textAlign='left';
+ let y=headH;
+ laid.forEach(r=>{ctx.strokeStyle=C.line;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(P,y);ctx.lineTo(W-P,y);ctx.stroke();
+  ctx.fillStyle=C.ink;ctx.font=F(700,24,body);
+  wrap(ctx,r.k,LW-20).forEach((l,i)=>ctx.fillText(l,P,y+16+i*32));
+  if(r.st!==null){const tag=r.st?'완료':'미완';ctx.font=F(700,18,body);const tw=ctx.measureText(tag).width+20;
+   ctx.fillStyle=r.st?C.soft:C.mark;ctx.fillRect(P,y+r.h-42,tw,28);ctx.fillStyle=r.st?C.accent:C.bad;ctx.fillText(tag,P+10,y+r.h-38)}
+  ctx.fillStyle=C.ink;ctx.font=F(400,24,body);r.lines.forEach((l,i)=>ctx.fillText(l,VX,y+16+i*36));
+  y+=r.h});
+ ctx.strokeStyle=C.line;ctx.beginPath();ctx.moveTo(P,y);ctx.lineTo(W-P,y);ctx.stroke();
+ ctx.fillStyle=C.muted;ctx.font=F(400,20,body);ctx.fillText('문제 분해와 모델링 활동지에서 생성된 이미지',P,y+24);
+ return await new Promise(res=>cv.toBlob(res,'image/png'));
+}
+function fname(){const n=(S.num||'').trim()||'번호없음',m=(S.name||'').trim()||'이름없음';return `${n}번_${m}_문제분해와모델링.png`.replace(/[\\/:*?"<>|]/g,'')}
+$('#makePng').onclick=async()=>{const fb=$('#pngFb');
+ if(!(S.num||'').trim()||!(S.name||'').trim()){fb.className='fb no';fb.textContent='맨 위에 번호와 이름을 먼저 적어 주세요.';return}
+ fb.className='fb';fb.textContent='만드는 중…';
+ const blob=await makePng();if(!blob){fb.className='fb no';fb.textContent='이미지를 만들지 못했어요. 다시 눌러 주세요.';return}
+ pngBlob=blob;pngStale=false;if(pngUrl)URL.revokeObjectURL(pngUrl);pngUrl=URL.createObjectURL(blob);
+ const img=$('#pngPrev');img.src=pngUrl;img.hidden=false;$('#pngHint').hidden=false;
+ $('#savePng').hidden=false;
+ fb.className='fb ok';fb.textContent='이미지를 만들었어요. PNG 저장을 눌러 주세요.'};
+$('#savePng').onclick=()=>{const fb=$('#pngFb');if(!pngBlob)return;
+ const a=document.createElement('a');a.href=pngUrl;a.download=fname();document.body.appendChild(a);a.click();a.remove();
+ fb.className='fb ok';fb.textContent='저장했어요. 다운로드 폴더의 파일을 첨부해서 제출하세요.'};
+
+bindSave();
+[0,1,2,3,4].forEach(i=>$('#tab'+i).classList.toggle('done',!!S['done'+i]));
+go(typeof S.tab==='number'?S.tab:0);
+
+})();
+</script>
+
+</body>
+</html>
